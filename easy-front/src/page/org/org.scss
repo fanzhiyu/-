@@ -1,0 +1,39 @@
+.org{
+  width: 100%;
+  height: 100%;
+  margin-top: 70px;
+}
+.next-right{
+  float: left;
+  margin-left: 1%;
+  width: 79%;
+}
+.org-title{
+  float: left;
+}
+.org-search{
+  float: right;
+  width: 30%;
+  background-color: #efefef;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 15px;
+  margin-top: 2px;
+}
+.org-search input{
+  border: 0px;
+  background: none;
+  width: 90%;
+  font-size: 14px;
+  height: 30px;
+  line-height: 30px;
+  text-indent: 10px;
+}
+.org-search i{
+  padding-left: 1em;
+}
+.active{
+  color: #00C6D7;
+}
+
+

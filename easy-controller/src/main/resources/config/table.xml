@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RESULT>
+	<table name="sys_user" generate="false"/>
+	<table name="sys_forms" generate="false"/>
+	<table name="sys_user_account" generate="false"/>
+	<table name="sys_user_org" generate="false"/>
+	<table name="sys_org" generate="false"/>
+	<table name="sign" generate="false"/>
+	<table name="sys_tab" generate="false"/>
+	<table name="sys_tab_field" generate="false"/>
+	<table name="sys_tab_field_type" generate="false"/>
+	<table name="sys_tab_type" generate="false"/>
+	<table name="sys_obj" generate="false"/>
+	<table name="sys_obj_tab" generate="false"/>
+	<table name="sys_obj_tab_field" generate="false"/>
+	<table name="province" generate="false"/>
+	<table name="city" generate="false"/>
+	<table name="district" generate="false"/>
+	<table name="sys_user_archives" generate="false"/>
+	<table name="sys_role" generate="false"/>
+	<table name="sys_user_role" generate="false"/>
+	<table name="sys_dictionary" generate="false"/>
+	<table name="sys_menu" generate="false"/>
+	<table name="sys_org_menu" generate="false"/>
+	<table name="sys_role_org" generate="false"/>
+	<table name="sys_role_menu" generate="false"/>
+</RESULT>

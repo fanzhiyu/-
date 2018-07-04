@@ -1,0 +1,34 @@
+server:
+  port: 9090
+  context-path: /
+  token:
+    timeout: 1800000
+security:
+  basic:
+    enabled: false
+spring:
+  datasource:
+    url: jdbc:mysql://192.168.0.12:3306/easy?useUnicode=true&charaterEncoding=utf8
+    username: easy
+    password: easy
+    driver: com.mysql.jdbc.Driver
+  application:
+    name: easy
+
+dubbo:
+  zookeeper: zookeeper://192.168.0.27:2181
+
+profiles:
+  active: user-test
+  secret: 7786df7fc3a34e26a61c034d5ec8245d
+
+config:
+  auth: true
+  filter: true
+  filterUrl: /user/signUser,/admin/login,/admin/refreshToken,/user/refreshToken,/orders/goToPay,/orders/notify_url,/orders/return_url,.js,.css,.png,.jpg,.html,.ico
+
+qiniu:
+  accessKey: v5mdxW_QsSCmIuiMnqIbvWOHNvuBcq78fRnd604e
+  secretKey: ZPRFvxc84-41VPusVxgccx3JEG1342AvezP5GKde
+  bucket: damon
+  url: http://oupq1rfmo.bkt.clouddn.com/
