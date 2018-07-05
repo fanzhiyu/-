@@ -283,10 +283,6 @@
          * 查找角色
          */
         modRole(){
-            if(this.checked.length > 1){
-              Toast("不能选择两条或两条以上的角色");
-              return;
-            }
             this.roleId = this.checked[0];
             this.$router.push({name:'roleAdd'});
             this.$parent.showPanel();

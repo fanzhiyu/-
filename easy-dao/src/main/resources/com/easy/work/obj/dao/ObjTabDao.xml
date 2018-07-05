@@ -37,7 +37,8 @@
   <select id="findListCondition" parameterType="com.easy.work.obj.domain.ObjTabDomain" resultType="com.easy.work.obj.domain.ObjTabDomain">
     SELECT
       A.OBJ_TAB_ID AS objTabId,
-      B.TAB_NAME AS tabName
+      B.TAB_NAME AS tabName,
+      A.TAB_ID AS tabId
     FROM
       SYS_OBJ_TAB A
     LEFT JOIN
@@ -57,7 +58,14 @@
       This element was generated on Wed May 30 08:57:30 CST 2018.
     -->
     delete from SYS_OBJ_TAB
-    where OBJ_TAB_ID = #{objTabId,jdbcType=VARCHAR}
+    where
+    1=1
+    <if test="objTabId != null and objTabId != ''">
+      and OBJ_TAB_ID = #{objTabId,jdbcType=VARCHAR}
+    </if>
+    <if test="objId != null and objId != ''">
+      and OBJ_ID = #{objId,jdbcType=VARCHAR}
+    </if>
   </delete>
   <insert id="insert" parameterType="com.easy.work.obj.domain.ObjTabDomain">
     <!--

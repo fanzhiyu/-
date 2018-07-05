@@ -29,8 +29,8 @@
               <input class='filter-title' type='text' readonly placeholder='选择表类型' />
               <span class='icon-arrow'></span>
             </div>
-            <select class='inputs' name='select'>
-              <option value="0">全部</option>
+            <select class='inputs' name='select' v-model="type">
+              <option value="">全部</option>
               <option value="1">添加对象</option>
               <option value="2">列表对象</option>
               <option value="2">查询对象</option>
@@ -127,6 +127,7 @@
             createUser: '',
             objs: [],
             checked: [],
+            type: '',
             active: false,
           }
       },
@@ -137,14 +138,19 @@
 
         init(){
           var param = {};
-          param['objId'] = this.objId;
+          param['pageSize'] = this.pageSize;
+          param['pageNo'] = this.currentPage;
+          param['objName'] = this.objName;
+          param['startDate'] = this.startDate;
+          param['endDate'] = this.endDate;
+          param['createUser'] = this.createUser;
+          param['objType'] = this.type;
           this.$httpService.getObjPager(param).then((res)=>{
             if(res.code == '2000'){
                 this.objs = res.rows;
                 this.count = res.total;
             }
           });
-
           this.setType();
         },
 
@@ -155,7 +161,7 @@
           var $this = this;
           $("#search-type").selectFilter({
             callBack : function (val){
-              $this.tabType = val;
+              $this.type = val;
             }
           });
         },
@@ -164,7 +170,7 @@
          * 查找
          */
         search(){
-
+          this.init();
         },
 
         /**

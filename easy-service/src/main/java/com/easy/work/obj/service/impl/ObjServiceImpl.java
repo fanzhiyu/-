@@ -117,7 +117,31 @@ public class ObjServiceImpl implements ObjService{
      */
     @Override
     public ObjModel searchObjDetails(ObjModel objModel) throws MessageException, TransformException {
-        return null;
+        checkObjId(objModel);
+        ObjDomain objDomain = new ObjDomain();
+        objDomain.setObjId(objModel.getObjId());
+        ObjDomain resObj = objDao.findCondition(objDomain);
+        ObjTabDomain objTabDomain = new ObjTabDomain();
+        objTabDomain.setObjId(objModel.getObjId());
+        List<ObjTabDomain> resObjTabList = objTabDao.findListCondition(objTabDomain);
+        List<ObjTabModel> objTabModels = new ArrayList<ObjTabModel>();
+        ObjTabModel model = null;
+        for(ObjTabDomain domain : resObjTabList){
+            model = new ObjTabModel();
+            model.setTabId(domain.getTabId());
+            ObjTabFieldDomain objTabFieldDomain = new ObjTabFieldDomain();
+            objTabFieldDomain.setObjTabId(domain.getObjTabId());
+            List<ObjTabFieldDomain> list = objTabFieldDao.findListCondition(objTabFieldDomain);
+            List<String> fieldIds = new ArrayList<String>();
+            for(ObjTabFieldDomain d : list){
+                fieldIds.add(d.getObjFieldId());
+            }
+            model.setFieldIds(fieldIds);
+            objTabModels.add(model);
+        }
+        ObjModel res = TransUtils.formatObject(ObjModel.class,resObj);
+        res.setTabIds(objTabModels);
+        return res;
     }
 
     /**
@@ -159,12 +183,23 @@ public class ObjServiceImpl implements ObjService{
         objDomain.setUpdateTime(DateUtils.getSystemDate());
         objDomain.setRuleNumber(DateUtils.getYYmm());
         objDao.insert(objDomain);
+        insertObjTab(objModel,objDomain.getObjId());
+
+    }
+
+    /**
+     * 添加对象关联表
+     * @param objModel
+     * @param objId
+     */
+    private void insertObjTab(ObjModel objModel,String objId){
+        UserBean userBean = userUtils.getUser();
         //**************>> start 添加对象对应的数据表 <<**************
         List<ObjTabDomain> insertTab = new ArrayList<ObjTabDomain>();
         ObjTabDomain objTabDomain = null;
         for(ObjTabModel objTabModel : objModel.getTabIds()){
             objTabDomain = new ObjTabDomain();
-            objTabDomain.setObjId(objDomain.getObjId());
+            objTabDomain.setObjId(objId);
             objTabDomain.setTabId(objTabModel.getTabId());
             objTabDomain.setObjTabId(objTabModel.getTabId());
             objTabDomain.setRuleNumber(DateUtils.getYYmm());
@@ -189,6 +224,7 @@ public class ObjServiceImpl implements ObjService{
                 objTabFieldDomain.setCreateTime(DateUtils.getSystemDate());
                 objTabFieldDomain.setUpdater(userBean.getUserCode());
                 objTabFieldDomain.setUpdateTime(DateUtils.getSystemDate());
+                objTabFieldDomain.setRuleNumber(DateUtils.getYYmm());
                 insertTabField.add(objTabFieldDomain);
             }
         }
@@ -200,8 +236,26 @@ public class ObjServiceImpl implements ObjService{
      * 更新数据对象
      * @param objModel
      */
-    private void updateObj(ObjModel objModel){
-
+    private void updateObj(ObjModel objModel) throws MessageException,TransformException{
+        checkObjId(objModel);
+        UserBean userBean = userUtils.getUser();
+        ObjDomain objDomain = TransUtils.formatObject(ObjDomain.class,objModel);
+        objDomain.setUpdater(userBean.getUserCode());
+        objDomain.setUpdateTime(DateUtils.getSystemDate());
+        ObjTabDomain objTabDomain = new ObjTabDomain();
+        objTabDomain.setObjId(objModel.getObjId());
+        List<ObjTabDomain> resultList = objTabDao.findListCondition(objTabDomain);
+        List<ObjTabFieldDomain> delObjTabField = new ArrayList<ObjTabFieldDomain>();
+        ObjTabFieldDomain objTabFieldDomain = null;
+        for(ObjTabDomain domain : resultList){
+            objTabFieldDomain = new ObjTabFieldDomain();
+            objTabFieldDomain.setObjTabId(domain.getObjTabId());
+            delObjTabField.add(objTabFieldDomain);
+        }
+        objDao.update(objDomain);
+        objTabDao.delete(resultList);
+        objTabFieldDao.delete(delObjTabField);
+        insertObjTab(objModel, objModel.getObjId());
     }
 
     /**

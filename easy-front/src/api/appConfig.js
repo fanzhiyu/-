@@ -91,6 +91,10 @@ var API = {
     API_PREFIX + '/obj/removeObj'
   ],
 
+  GETOBJDETAILS: [
+    API_PREFIX + '/obj/getObjDetails'
+  ],
+
   SAVEEVNET: [
     API_PREFIX + '/event/save'
   ],

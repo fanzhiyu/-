@@ -15,7 +15,6 @@
             <span class='icon-arrow'></span>
           </div>
           <select class='inputs' name='select' v-model="objType">
-            <option value="">选择对象</option>
             <option value="1">添加对象</option>
             <option value="2">列表对象</option>
             <option value="3">查询对象</option>
@@ -30,7 +29,6 @@
             <span class='icon-arrow'></span>
           </div>
           <select class='inputs' name='select' v-model="objStatus">
-            <option value="">选择状态</option>
             <option value="1">启用</option>
             <option value="2">禁用</option>
           </select>
@@ -64,7 +62,7 @@
               <tr v-for="item in tabFields">
                 <td >
                   <label class="checkbox00" >
-                    <input type="checkbox" v-model="item.checkbox" value="1" name="checkbox"><span></span>
+                    <input type="checkbox" @click="selectAll($event)" v-model="checked" :value="item.tabFieldId" name="checkbox"><span></span>
                   </label>
                 </td>
                 <td>{{item.tabFieldId}}</td>
@@ -80,7 +78,7 @@
     </section>
     <div class="submit-btn">
       <ul>
-        <li class="btn-cancel"><a href="javascript:;">取消</a></li>
+        <li class="btn-cancel"><a href="javascript:;" @click="cancel()">取消</a></li>
         <li class="btn-confirm"><a href="javascript:;" @click="save()">确认</a></li>
         <div class="clearfix"></div>
       </ul>
@@ -99,6 +97,20 @@
           tabIds: [],
           tabFields: [],
           objStatus: '',
+          objId: '',
+          array: [],
+          checked: []
+        }
+      },
+      watch:{
+        change(){
+          this.searchDetails();
+        }
+      },
+      computed: {
+        change() {
+          this.objId = this.$parent.$parent.objId;
+          return this.objId;
         }
       },
       mounted(){
@@ -112,7 +124,7 @@
             selectionHeader: '<div class="header">已选数据表</div>',
             selectableOptgroup: true,
             afterSelect: function (values) {
-                $this.tabIds.push(values[0]);
+                $this.tabIds = values;
                 $this.searchFieldList();
             },
             afterDeselect: function (values) {
@@ -131,11 +143,56 @@
          */
         setType(){
           var $this = this;
-          $("#select-type").selectFilter({
-            callBack : function (val){
-              $this.objType = val;
+          $this.$nextTick(()=>{
+            $("#select-type").selectFilter({
+              callBack : function (val){
+                $this.objType = val;
+              }
+            });
+          })
+        },
+
+        /**
+         * 查找对象详细
+         */
+        searchDetails(){
+            var objId = this.objId;
+            var $this = this;
+            $this.clear();
+            if(objId){
+              var param = {};
+              param['objId'] = this.objId;
+              $this.$httpService.getObjDetails(param).then((res)=>{
+                if(res.code == '2000'){
+                  var data = res.data;
+                  $this.objName = data.objName;
+                  $this.objType = data.objType;
+                  $this.objStatus = data.objStatus;
+                  $this.setType();
+                  $this.setStatus();
+                  data.tabIds.forEach((obj,index)=>{
+                    $this.array.push(obj.tabId);
+                    obj.fieldIds.forEach((obj,index)=>{
+                      $this.checked.push(obj);
+                    })
+                  });
+                  $('#optgroup').multiSelect('select', $this.array);
+                }
+              })
             }
-          });
+        },
+
+        /**
+         * 清空
+         */
+        clear(){
+          this.objName = "";
+          this.objType = "";
+          this.objStatus = "";
+          this.tabIds = [];
+          $("#select-type input").val("");
+          $("#select-status input").val("");
+          $('#optgroup').multiSelect('deselect',this.array);
         },
 
         /**
@@ -143,11 +200,27 @@
          */
         setStatus(){
           var $this = this;
-          $("#select-status").selectFilter({
-            callBack: function(val){
-              $this.objStatus = val;
-            }
+          $this.$nextTick(()=>{
+            $("#select-status").selectFilter({
+              callBack: function(val){
+                $this.objStatus = val;
+              }
+            })
           })
+        },
+
+        /**
+         * 多选
+         */
+        selectAll($event){
+          var checked = $($event.target);
+          var val = $($event.target).val();
+          if(checked.is(":checked")){
+            this.checked.push(val);
+          }else{
+            var index = this.checked.indexOf(val);
+            this.checked.splice(index,1);
+          }
         },
 
         /**
@@ -174,6 +247,7 @@
               var json = {'tabIds':this.tabIds};
               param['params'] = JSON.stringify(json)
               this.$httpService.getTabFieldList(param).then((res)=>{
+                  console.log(res);
                 if(res.code == '2000'){
                   this.tabFields = res.data.fields;
                 }
@@ -196,23 +270,38 @@
               var fieldArray = [];
               for(var j=0,leng=fields.length;j<leng;j++){
                 var field = fields[j];
-                if(field.checkbox && field.tabId == tabId){
-                  fieldArray.push(field.tabFieldId)
+                if(field.tabId == tabId){
+                  this.checked.forEach((obj,index)=>{
+                      if(obj == field.tabFieldId){
+                        fieldArray.push(field.tabFieldId)
+                      }
+                  })
                 }
               }
               json['tabId'] = tabId;
               json['fieldIds'] = fieldArray;
               tabs.push(json)
             }
+            param['objId'] = this.objId;
             param['objName'] = this.objName;
             param['objType'] = this.objType;
             param['objStatus'] = this.objStatus;
             param['params'] = JSON.stringify({"tabIds":tabs});
             this.$httpService.saveObj(param).then((res)=>{
-              console.log(res);
+              if(res.code == '2000'){
+                  this.$parent.$parent.init();
+                  this.$parent.$parent.$parent.hidePanel();
+              }
             })
           }
-        }
+        },
+
+        /**
+         * 取消
+         */
+        cancel(){
+          this.$parent.$parent.$parent.hidePanel();
+        },
       }
   }
 </script>

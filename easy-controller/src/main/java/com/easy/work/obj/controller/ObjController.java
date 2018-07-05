@@ -80,6 +80,19 @@ public class ObjController {
     }
 
     /**
+     * 获取对象详细
+     * @param objModel
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @RequestMapping(value = "getObjDetails", method = RequestMethod.GET)
+    public ResponseEntity getObjDetails(@ModelAttribute ObjModel objModel) throws MessageException,TransformException{
+        ObjModel result = objService.searchObjDetails(objModel);
+        return ResponseUtil.success(result);
+    }
+
+    /**
      * 删除对象
      * @param objModel
      * @return

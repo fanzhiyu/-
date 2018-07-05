@@ -27,7 +27,7 @@ const userRole = lazyLoad('org/userRole')
 const userAccount = lazyLoad('org/userAccount')
 const auth = lazyLoad('auth/auth')
 const authAdd = lazyLoad('auth/authAdd')
-
+const list = lazyLoad('list/list')
 
 export default new Router({
     trict: process.env.NODE_ENV !== 'production',
@@ -157,6 +157,11 @@ export default new Router({
                   component: authAdd
                 }
               ]
+            },
+            {
+              path: '/list',
+              name: 'list',
+              component: list
             }
           ]
         },

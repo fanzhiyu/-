@@ -52,7 +52,8 @@
   <select id="findListCondition" parameterType="com.easy.work.obj.domain.ObjTabFieldDomain" resultType="com.easy.work.obj.domain.ObjTabFieldDomain">
     SELECT
       A.OBJ_TAB_FIELD_ID AS objTabFieldId,
-      C.TAB_FIELD_COMMENT AS fieldComment
+      C.TAB_FIELD_COMMENT AS fieldComment,
+      A.OBJ_FIELD_ID AS objFieldId
     FROM
       SYS_OBJ_TAB_FIELD A
     LEFT JOIN
@@ -63,6 +64,9 @@
       1=1
       <if test="objId != null and objId != ''">
         and B.OBJ_ID = #{objId,jdbcType=VARCHAR}
+      </if>
+      <if test="objTabId != null and objTabId != ''">
+        and A.OBJ_TAB_ID = #{objTabId,jdbcType=VARCHAR}
       </if>
     </where>
   </select>

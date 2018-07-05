@@ -20,6 +20,8 @@ public class ObjPager extends PagingModel<ObjPager>{
     private String updateDate;
     private String objType;
     private String objStatus;
+    private String startDate;
+    private String endDate;
 
     public String getObjName() {
         return objName;
@@ -83,5 +85,21 @@ public class ObjPager extends PagingModel<ObjPager>{
 
     public void setObjStatus(String objStatus) {
         this.objStatus = objStatus;
+    }
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 }

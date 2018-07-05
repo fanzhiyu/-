@@ -134,6 +134,14 @@ export default {
   },
 
   /**
+   * 获取对象详细
+   * @param param
+   */
+  getObjDetails: function(param){
+    return GET(API.GETOBJDETAILS,param)
+  },
+
+  /**
    * 获取对象列表
    * @param param
    */

@@ -9,6 +9,7 @@ public class MenuModel {
 
     private String menuId;
     private String parentId;
+    private String objId;
     private String menuName;
     private String menuUrl;
     private String menuIcon;
@@ -35,6 +36,14 @@ public class MenuModel {
 
     public void setParentId(String parentId) {
         this.parentId = parentId;
+    }
+
+    public String getObjId() {
+        return objId;
+    }
+
+    public void setObjId(String objId) {
+        this.objId = objId;
     }
 
     public String getMenuName() {

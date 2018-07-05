@@ -90,6 +90,7 @@ public class MenuServiceImpl implements MenuService {
         MenuDomain menuDomain = TransUtils.formatObject(MenuDomain.class,menuModel);
         menuDomain.setUpdater(userBean.getUserCode());
         menuDomain.setUpdateTime(DateUtils.getSystemDate());
+        menuDomain.setMenuUrl(StringUtils.isNotNull(menuModel.getObjId()) ? "/list" : menuModel.getMenuUrl());
         if(StringUtils.isNull(menuDomain.getMenuId())){
             menuDomain.setCreater(userBean.getUserCode());
             menuDomain.setCreateTime(DateUtils.getSystemDate());

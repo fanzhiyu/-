@@ -191,6 +191,7 @@ public class RoleServiceImpl implements RoleService {
             domain.setCreateTime(DateUtils.getSystemDate());
             domain.setUpdater(userBean.getUserCode());
             domain.setUpdateTime(DateUtils.getSystemDate());
+            domain.setRuleNumber(DateUtils.getYYmm());
             insertDomain.add(domain);
         }
         RoleMenuDomain roleMenuDomain = new RoleMenuDomain();

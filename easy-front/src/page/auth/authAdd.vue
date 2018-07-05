@@ -43,6 +43,20 @@
     </section>
     <section class="group">
       <div class="control">
+        <label class="left">关联对象&nbsp;：</label>
+        <div class="left" style="width: 70%">
+          <div class='filter-box' id="object" style="width: 100%;">
+            <div class='filter-text'>
+              <input class='filter-title' type='text' readonly placeholder='选择关联对象' />
+              <span class='icon-arrow'></span>
+            </div>
+            <select class='inputs' name='type' v-model="objId">
+              <option v-for="item in objList" :value="item.objId">{{item.objName}}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="control" v-if="objId == ''">
         菜单路径<span class="required">*</span>：
         <input type="text" placeholder="请填写菜单路径" check="ckNull" v-model="menuUrl" message="菜单路径"/>
       </div>
@@ -99,6 +113,8 @@
             menuIcon: '',
             menuSeq: '',
             menuList: [],
+            objId: '',
+            objList: [],
           }
       },
       mounted(){
@@ -122,6 +138,33 @@
         init(){
             this.setType();
             this.setStatus();
+            this.searchObj();
+        },
+
+        /**
+         * 查找对象
+         */
+        searchObj(){
+          this.$httpService.getObjAll().then((res)=>{
+              if(res.code == '2000'){
+                this.objList = res.data;
+                this.setObject();
+              }
+          })
+        },
+
+        /**
+         * 设置对象
+         */
+        setObject(){
+            var $this = this;
+            $this.$nextTick(()=>{
+                $("#object").selectFilter({
+                  callBack: (val)=>{
+                    $this.objId = val;
+                  }
+                })
+            })
         },
 
         /**
@@ -216,6 +259,7 @@
               param['menuStatus'] = this.status;
               param['menuRemark'] = this.remark;
               param['menuType'] = this.menuType;
+              param['objId'] = this.objId;
               this.$httpService.saveMenu(param).then((res)=>{
                 if(res.code == '2000'){
                   this.$parent.$parent.init();

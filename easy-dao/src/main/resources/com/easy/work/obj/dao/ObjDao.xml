@@ -75,10 +75,10 @@
         and B.USER_NAME LIKE '%' #{createUser,jdbcType=VARCHAR} '%'
       </if>
       <if test="startDate != null and startDate != ''">
-        and A.CREATE_TIME <![CDATA[ >= ]]> #{startDate,jdcbType=VARCHAR}
+        and A.CREATE_TIME <![CDATA[ >= ]]> #{startDate,jdbcType=VARCHAR}
       </if>
       <if test="endDate != null and endDate != ''">
-        and A.CREATE_TIME <![CDATA[ <= ]]> #{endDate,jdcbType=VARCHAR}
+        and A.CREATE_TIME <![CDATA[ <= ]]> #{endDate,jdbcType=VARCHAR}
       </if>
     </where>
     LIMIT #{pageStart},#{pageEnd}
@@ -87,7 +87,9 @@
     SELECT
       COUNT(0) as count
     FROM
-      SYS_OBJ
+      SYS_OBJ A
+    LEFT JOIN SYS_USER B ON(A.CREATER = B.USER_CODE)
+    LEFT JOIN SYS_USER C ON(A.UPDATER = C.USER_CODE)
     <where>
       1=1
       <if test="objId != null and objId != ''">
@@ -106,10 +108,10 @@
         and B.USER_NAME LIKE '%' #{createUser,jdbcType=VARCHAR} '%'
       </if>
       <if test="startDate != null and startDate != ''">
-        and A.CREATE_TIME <![CDATA[ >= ]]> #{startDate,jdcbType=VARCHAR}
+        and A.CREATE_TIME <![CDATA[ >= ]]> #{startDate,jdbcType=VARCHAR}
       </if>
       <if test="endDate != null and endDate != ''">
-        and A.CREATE_TIME <![CDATA[ <= ]]> #{endDate,jdcbType=VARCHAR}
+        and A.CREATE_TIME <![CDATA[ <= ]]> #{endDate,jdbcType=VARCHAR}
       </if>
     </where>
   </select>
