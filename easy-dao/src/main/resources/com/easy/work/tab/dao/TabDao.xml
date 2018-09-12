@@ -33,18 +33,21 @@
   <sql id="Column_Where">
     <if test="paramList != null">
       <foreach collection="paramList" index="key" item="value">
-        <foreach collection="fieldList" item="field">
-          <if test="field.tabFieldName == key and value != null and value != ''">
-            and ${field.tabFieldName} = #{value}
-          </if>
-        </foreach>
+        <!--<foreach collection="fieldList" item="field">-->
+          <!--<if test="field.tabFieldName == key and value != null and value != ''">-->
+            <!--and ${field.tabFieldName} = #{value}-->
+          <!--</if>-->
+        <!--</foreach>-->
+        <if test="value != null and value != ''">
+          and ${key}  ${value}
+        </if>
       </foreach>
     </if>
   </sql>
   <sql id="Base_Column">
     <foreach collection="fieldList"
              item="field" separator=",">
-      ${field.tabFieldName}
+      ${field.tabFieldName} as ${field.alias}
     </foreach>
   </sql>
   <select id="findCondition" parameterType="java.lang.String" resultMap="BaseResultMap">
@@ -56,7 +59,15 @@
     select 
     <include refid="Base_Column_List" />
     from SYS_TAB
-    where TAB_ID = #{tabId,jdbcType=VARCHAR}
+    <where>
+      1=1
+      <if test="tabId != null and tabId != ''">
+        and TAB_ID = #{tabId,jdbcType=VARCHAR}
+      </if>
+      <if test="tabName != null and tabName != ''">
+        and TAB_NAME = #{tabName,jdbcType=VARCHAR}
+      </if>
+    </where>
   </select>
   <select id="findListCondition" parameterType="com.easy.work.tab.domain.TabDomain" resultMap="BaseResultMap">
     select
@@ -96,6 +107,26 @@
           </foreach>
         </trim>
   </insert>
+  <update id="updateData" parameterType="com.easy.work.tab.domain.TabDomain">
+    UPDATE `${tabName}`
+    <set>
+        <foreach collection="fieldMap" index="key" item="value" open="" separator="," close="">
+          <if test="value != null">
+            `${key}` = #{value}
+          </if>
+        </foreach>
+    </set>
+    where
+    <foreach collection="keyMap" index="key" item="value">
+      ${key} = #{value}
+    </foreach>
+  </update>
+  <delete id="deleteData" parameterType="com.easy.work.tab.domain.TabDomain">
+    DELETE FROM `${tabName}` WHERE
+    <foreach collection="keyMap" index="key" item="value">
+      ${key} = #{value}
+    </foreach>
+  </delete>
   <update id="createTable" parameterType="com.easy.work.tab.domain.TabDomain">
     CREATE TABLE `${tabName}` (
     <foreach collection="fieldList"
@@ -204,7 +235,10 @@
     SELECT
       <include refid="Base_Column" />
     FROM
-      `${tabName}`
+      <foreach collection="tabNameList"
+             item="tabName" separator=",">
+        ${tabName}
+      </foreach>
     <where>
       1=1
       <include refid="Column_Where" />
@@ -215,7 +249,10 @@
     SELECT
       count(0) as count
     FROM
-      `${tabName}`
+      <foreach collection="tabNameList"
+               item="tabName" separator=",">
+        ${tabName}
+      </foreach>
     <where>
       1=1
       <include refid="Column_Where" />
@@ -225,7 +262,10 @@
     SELECT
       <include refid="Base_Column" />
     FROM
-    `${tabName}`
+      <foreach collection="tabNameList"
+               item="tabName" separator=",">
+        ${tabName}
+      </foreach>
     WHERE
     1=1
     <include refid="Column_Where" />

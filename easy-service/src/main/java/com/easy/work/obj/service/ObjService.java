@@ -1,10 +1,14 @@
 package com.easy.work.obj.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.easy.core.exception.MessageException;
 import com.easy.core.exception.TransformException;
-import com.easy.work.obj.model.ObjModel;
-import com.easy.work.obj.model.ObjPager;
-import com.easy.work.obj.model.ObjTabFieldModel;
+import com.easy.work.forms.model.FormsModel;
+import com.easy.work.obj.model.*;
+import com.easy.work.tab.model.TabDataPager;
+import com.easy.work.tab.model.TabFieldInfoModel;
+import com.easy.work.tab.model.TabModel;
 
 import java.util.List;
 
@@ -46,7 +50,7 @@ public interface ObjService {
      * @throws MessageException
      * @throws TransformException
      */
-    public void saveObj(ObjModel objModel) throws MessageException,TransformException;
+    public void saveObj(ObjModel objModel,String params) throws MessageException,TransformException;
 
     /**
      * 查找详细
@@ -58,10 +62,51 @@ public interface ObjService {
     public ObjModel searchObjDetails(ObjModel objModel) throws MessageException,TransformException;
 
     /**
+     * 根对象id查找表数据
+     * @param objModel
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    public TabDataPager searchTabDataByObjId(ObjModel objModel) throws MessageException,TransformException;
+
+    /**
+     * 查找表数据详细
+     * @param params
+     * @return
+     * @throws MessageException
+     */
+    public JSONObject searchTabDataDetails(String params) throws MessageException,TransformException;
+
+    /**
      * 删除数据对象
      * @param objModel
      * @throws MessageException
      * @throws TransformException
      */
     public void deleteObj(ObjModel objModel) throws MessageException;
+
+    /**
+     * 根据objId查找表单
+     * @param objModel
+     * @return
+     * @throws MessageException
+     */
+    public FormsModel searchFormByObjId(ObjModel objModel) throws MessageException,TransformException;
+
+    /**
+     * 根据objId查找出字段
+     * @param objModel
+     * @return
+     * @throws MessageException
+     */
+    public FormsModel searchFieldByObjId(ObjModel objModel) throws MessageException,TransformException;
+
+    /**
+     * 删除表数据
+     * @param params
+     * @throws MessageException
+     * @throws TransformException
+     */
+    public void deleteTabData(String params) throws MessageException,TransformException;
 }

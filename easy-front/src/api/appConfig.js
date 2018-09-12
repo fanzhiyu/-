@@ -31,6 +31,10 @@ var API = {
     API_PREFIX + '/forms/getFormsDetails'
   ],
 
+  GETALLFORMS:[
+    API_PREFIX + '/forms/getAllForms'
+  ],
+
   GETWEATHER:[
     API_PREFIX + '/weather/getWeather'
   ],
@@ -93,6 +97,26 @@ var API = {
 
   GETOBJDETAILS: [
     API_PREFIX + '/obj/getObjDetails'
+  ],
+
+  GETOBJDATAPAGER: [
+    API_PREFIX + '/obj/getObjDataPager'
+  ],
+
+  GETFORMSBYOBJID: [
+    API_PREFIX + '/obj/getFormsByObjId'
+  ],
+
+  GETFIELDBYOBJID: [
+    API_PREFIX + '/obj/getFieldByObjId'
+  ],
+
+  GETTABDATADETAILS: [
+    API_PREFIX + '/obj/getTabDataDetails'
+  ],
+
+  REMOVETABDATA: [
+    API_PREFIX + '/obj/removeTabData'
   ],
 
   SAVEEVNET: [

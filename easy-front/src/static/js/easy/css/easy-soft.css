@@ -170,6 +170,7 @@ input[type='radio'],input[type='checkbox']{
   height: 50px;
   border: 1px dashed #00C6D7;
   cursor: pointer;
+  display: block;
 }
 .layout-column{
   border-right:1px dashed #00C6D7;
@@ -330,8 +331,9 @@ input[type='radio'],input[type='checkbox']{
   width: 100%;
   height: 400px;
   padding-bottom: 20px;
-  overflow-y:auto;
+  /*overflow-y:auto;*/
   margin-top: 45px;
+  margin-right: 10px;
 }
 .nature .title{
   width: 100%;
@@ -621,7 +623,7 @@ input[type='radio'],input[type='checkbox']{
 
 .form-title{
   width: 100%;
-  height: 50px;
+  /*height: 50px;*/
   text-indent: 20px;
   font-weight: 500;
   font-size: 1.8em;
@@ -723,14 +725,17 @@ input[type='radio'],input[type='checkbox']{
   margin-right:20px;
 }
 .layout-delete{
-  width: 80px;
+  position: absolute;
+  width: 60px;
   line-height: 25px;
-  float: right;
   text-align: center;
   font-size: 13px;
-  background: #00C6D7;
+  background-color: rgba(0,198,215,1);
   margin-bottom: 0px;
   color: #ffffff;
-  position: relative;
   z-index: 200;
+  display: none;
+}
+.layout:hover .layout-delete{
+  display: block;
 }

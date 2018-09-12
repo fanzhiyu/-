@@ -14,6 +14,7 @@ public class ObjTabFieldDto extends Domain {
     private String fieldName;
     private String fieldIsNull;
     private String fieldIsKey;
+    private String tabFieldType;
 
     public String getObjId() {
         return objId;
@@ -53,6 +54,15 @@ public class ObjTabFieldDto extends Domain {
 
     public void setFieldIsKey(String fieldIsKey) {
         this.fieldIsKey = fieldIsKey;
+    }
+
+
+    public String getTabFieldType() {
+        return tabFieldType;
+    }
+
+    public void setTabFieldType(String tabFieldType) {
+        this.tabFieldType = tabFieldType;
     }
 
     @Override

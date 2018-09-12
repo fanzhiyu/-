@@ -19,15 +19,16 @@ const sign = lazyLoad('sign/sign');
 const tabs = lazyLoad('tabs/tabs');
 const tabsAdd = lazyLoad('tabs/tabsAdd');
 const object = lazyLoad('object/object');
-const objectAdd = lazyLoad('object/objectAdd')
-const formsDetails = lazyLoad('form/formsDetails')
-const role = lazyLoad('role/role')
-const roleAdd = lazyLoad('role/roleAdd')
-const userRole = lazyLoad('org/userRole')
-const userAccount = lazyLoad('org/userAccount')
-const auth = lazyLoad('auth/auth')
-const authAdd = lazyLoad('auth/authAdd')
-const list = lazyLoad('list/list')
+const objectAdd = lazyLoad('object/objectAdd');
+const formsDetails = lazyLoad('form/formsDetails');
+const role = lazyLoad('role/role');
+const roleAdd = lazyLoad('role/roleAdd');
+const userRole = lazyLoad('org/userRole');
+const userAccount = lazyLoad('org/userAccount');
+const auth = lazyLoad('auth/auth');
+const authAdd = lazyLoad('auth/authAdd');
+const list = lazyLoad('list/list');
+const listAdd = lazyLoad('list/listAdd');
 
 export default new Router({
     trict: process.env.NODE_ENV !== 'production',
@@ -161,7 +162,14 @@ export default new Router({
             {
               path: '/list',
               name: 'list',
-              component: list
+              component: list,
+              children: [
+                {
+                  path: '/list-add',
+                  name: 'listAdd',
+                  component: listAdd
+                }
+              ]
             }
           ]
         },

@@ -56,6 +56,8 @@ public class EventServiceImpl implements EventService {
         List<ObjTabDomain> resultList = objTabDao.findListCondition(objTabDomain);
         Map<String,Object> maps = null;
         TabDomain tabDomain = null;
+        boolean insert = true;
+        Map<String,Object> keyMap = new HashMap<>();
         if(StringUtils.isNotNull(resultList) && resultList.size() > 0){
             for(ObjTabDomain domain : resultList){
                 tabDomain = new TabDomain();
@@ -69,23 +71,32 @@ public class EventServiceImpl implements EventService {
                         objTabFieldDomain.setObjTabFieldId(key);
                         objTabFieldDomain.setObjTabId(domain.getObjTabId());
                         ObjTabFieldDomain result = objTabFieldDao.findCondition(objTabFieldDomain);
-
                         if(StringUtils.isNotNull(result)){
                             if(StringUtils.isEquals(EasyConstant.IS_NOT_NULL,result.getFieldIsNull())
                                     && StringUtils.isNull(object.get(key))){
                                 throw new MessageException(Manager.getMessage(EasyMessage.EASY1001,result.getFieldComment()));
                             }
-                            Object val  =object.get(key);
-                            if(StringUtils.isEquals(EasyConstant.IS_KEY,result.getFieldIsKey())){
-                                val = RandomNumberUtil.getNewId();
+                            Object val  = object.get(key);
+                            if(StringUtils.isEquals(EasyConstant.IS_KEY,result.getObjKey()) && StringUtils.isNotNull(val)){
+                                insert = false;
+                                keyMap.put(result.getFieldName(),val);
+                            }else if (StringUtils.isEquals(EasyConstant.IS_KEY,result.getObjKey())){
+                                maps.put(result.getFieldName(),RandomNumberUtil.getNewId());
+                            }else{
+                                maps.put(result.getFieldName(), val);
                             }
-                            maps.put(result.getFieldName(), val);
                         }
                     }
                 }
                 tabDomain.setTabName(domain.getTabName());
                 tabDomain.setFieldMap(maps);
-                tabDao.insertData(tabDomain);
+                tabDomain.setKeyMap(keyMap);
+                if(insert){
+                    tabDao.insertData(tabDomain);
+                }else{
+                    tabDao.updateData(tabDomain);
+                }
+
             }
         }
     }

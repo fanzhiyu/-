@@ -236,7 +236,7 @@
 }
 .search{
   min-height: 60px;
-  margin-top: 20px;
+  margin-top: 10px;
   padding: 15px;
 }
 .search .control-inputs{
@@ -407,6 +407,11 @@ table tbody tr:hover{
   cursor: pointer;
 }
 table tbody tr td{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+table thead tr th{
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

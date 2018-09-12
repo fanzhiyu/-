@@ -2,6 +2,7 @@ package com.easy.work.tab.service;
 
 import com.easy.core.exception.MessageException;
 import com.easy.core.exception.TransformException;
+import com.easy.work.tab.domain.TabDomain;
 import com.easy.work.tab.model.*;
 
 import java.util.List;
@@ -88,5 +89,12 @@ public interface TabService {
      * @throws TransformException
      */
     public Map<String,Object> searchTabData(TabDataModel tabDataModel) throws MessageException,TransformException;
+
+    /**
+     * 删除表数据
+     * @param tabModel
+     * @throws MessageException
+     */
+    public void deleteTabData(TabModel tabModel) throws MessageException;
 
 }

@@ -16,6 +16,10 @@ public class TabFieldDto extends Domain{
 
     private String tabComment;
 
+    private List<String> tabFieldIdList;
+
+    private String alias;
+
     public List<String> getTabIds() {
         return tabIds;
     }
@@ -30,6 +34,22 @@ public class TabFieldDto extends Domain{
 
     public void setTabComment(String tabComment) {
         this.tabComment = tabComment;
+    }
+
+    public List<String> getTabFieldIdList() {
+        return tabFieldIdList;
+    }
+
+    public void setTabFieldIdList(List<String> tabFieldIdList) {
+        this.tabFieldIdList = tabFieldIdList;
+    }
+
+    public String getAlias() {
+        return alias;
+    }
+
+    public void setAlias(String alias) {
+        this.alias = alias;
     }
 
     @Override

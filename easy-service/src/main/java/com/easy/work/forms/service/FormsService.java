@@ -6,6 +6,8 @@ import com.easy.work.forms.model.FormsModel;
 import com.easy.work.forms.model.FormsPager;
 import com.easy.work.forms.model.FormsSearch;
 
+import java.util.List;
+
 /**
  * Created by apple on 18/4/12.
  */
@@ -33,4 +35,12 @@ public interface FormsService {
      * @throws MessageException
      */
     public FormsModel searchFormsDetails(FormsModel formsModel) throws MessageException,TransformException;
+
+    /**
+     * 查询出所有表单
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    public List<FormsModel> searchForms() throws MessageException,TransformException;
 }

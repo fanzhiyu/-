@@ -2,6 +2,7 @@ package com.easy.work.tab.model;
 
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by apple on 18/5/18.
@@ -18,6 +19,7 @@ public class TabModel {
     private String options;
     private String tabFiles;
     private List<TabFieldInfoModel> fields;
+    private Map<String,Object> keyMap;
 
     public String getTabId() {
         return tabId;
@@ -97,5 +99,13 @@ public class TabModel {
 
     public void setFields(List<TabFieldInfoModel> fields) {
         this.fields = fields;
+    }
+
+    public Map<String, Object> getKeyMap() {
+        return keyMap;
+    }
+
+    public void setKeyMap(Map<String, Object> keyMap) {
+        this.keyMap = keyMap;
     }
 }

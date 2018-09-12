@@ -21,6 +21,30 @@
           </select>
         </div>
       </div>
+      <div class="control" v-if="objType == '2'">
+        <div class="left">查询表单<span class="required">*</span>：</div>
+        <div class='filter-box' id="searchForm" style="width: 70%">
+          <div class='filter-text'>
+            <input class='filter-title' type='text' check="ckNull" message="查询表单" readonly placeholder='选择查询表单' />
+            <span class='icon-arrow'></span>
+          </div>
+          <select class='inputs' name='select' v-model="searchFormId">
+            <option v-for="item in searchForm" :value="item.formId">{{item.formTitle}}</option>
+          </select>
+        </div>
+      </div>
+      <div class="control" v-if="objType == '2'">
+        <div class="left">添加表单<span class="required">*</span>：</div>
+        <div class='filter-box' id="addForm" style="width: 70%">
+          <div class='filter-text'>
+            <input class='filter-title' type='text' check="ckNull" message="添加表单" readonly placeholder='选择添加表单' />
+            <span class='icon-arrow'></span>
+          </div>
+          <select class='inputs' name='select' v-model="addFormId">
+            <option v-for="item in addForm" :value="item.formId">{{item.formTitle}}</option>
+          </select>
+        </div>
+      </div>
       <div class="control">
         <div class="left">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态<span class="required">*</span>：</div>
         <div class='filter-box' id="select-status" style="width: 70%">
@@ -45,7 +69,7 @@
         <div class="clear"></div>
         <div class="titles"><h3>选择字段</h3></div>
         <div class="tables" style="margin-bottom: 40px;">
-          <table class="table table-bordered">
+          <table class="table table-bordered" style="margin-bottom: 100px;">
             <thead>
             <tr>
               <th width="7%">
@@ -56,6 +80,8 @@
               <th width="10%">对应表</th>
               <th width="10%">类型</th>
               <th width="10%">长度</th>
+              <th width="10%" v-if="objType == '1' || objType == '2'">主键列</th>
+              <th width="10%" v-if="objType == '3'">查询条件</th>
             </tr>
             </thead>
             <tbody>
@@ -70,6 +96,21 @@
                 <td>{{item.tabComment}}</td>
                 <td>{{item.tabFieldType}}</td>
                 <td>{{item.tabFieldLength}}</td>
+                <td v-if="objType == '1' || objType == '2'">
+                  <label class="checkbox00" >
+                    <input type="checkbox" v-model="item.objKey" name="checkbox"><span></span>
+                  </label>
+                </td>
+                <td v-if="objType == '3'">
+                  <select v-model="item.condition">
+                    <option value="=">等于</option>
+                    <option value=">">大于</option>
+                    <option value="<">小于</option>
+                    <option value=">=">大于等于</option>
+                    <option value="<=">小于等于</option>
+                    <option value="like">模糊</option>
+                  </select>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -99,7 +140,11 @@
           objStatus: '',
           objId: '',
           array: [],
-          checked: []
+          checked: [],
+          searchForm: [],
+          addForm: [],
+          searchFormId: '',
+          addFormId: ''
         }
       },
       watch:{
@@ -124,14 +169,20 @@
             selectionHeader: '<div class="header">已选数据表</div>',
             selectableOptgroup: true,
             afterSelect: function (values) {
-                $this.tabIds = values;
+                console.log("1233");
+                for(var i=0,len=values.length;i<len; i++){
+                  $this.tabIds.push(values[i]);
+                }
                 $this.searchFieldList();
             },
             afterDeselect: function (values) {
-                var value = values[0];
-                var index = $this.tabIds.indexOf(value);
-                $this.tabIds.splice(index,1);
-                $this.searchFieldList();
+                for(var i=0,len=values.length;i<len; i++){
+                  var value = values[i];
+                  var index = $this.tabIds.indexOf(value);
+                  $this.tabIds.splice(index,1);
+                  $this.searchFieldList();
+                }
+
             }
           });
           $this.setType();
@@ -147,6 +198,7 @@
             $("#select-type").selectFilter({
               callBack : function (val){
                 $this.objType = val;
+                $this.searchAllForms();
               }
             });
           })
@@ -193,6 +245,7 @@
           $("#select-type input").val("");
           $("#select-status input").val("");
           $('#optgroup').multiSelect('deselect',this.array);
+          this.array = [];
         },
 
         /**
@@ -242,17 +295,61 @@
          */
         searchFieldList(){
             this.tabFields = [];
+            console.log("12323");
             if(this.tabIds.length > 0){
               var param = {};
               var json = {'tabIds':this.tabIds};
               param['params'] = JSON.stringify(json)
               this.$httpService.getTabFieldList(param).then((res)=>{
-                  console.log(res);
                 if(res.code == '2000'){
                   this.tabFields = res.data.fields;
                 }
               })
             }
+        },
+
+        /**
+         * 查询所有表单
+         */
+        searchAllForms(){
+            if(this.objType == 2){
+              this.$httpService.getAllForms().then((res)=>{
+                if(res.code == '2000'){
+                  this.searchForm = res.data;
+                  this.addForm = res.data;
+                  this.setSearchForm();
+                  this.setAddForm();
+                }
+              })
+            }
+        },
+
+        /**
+         * 设置查询表单列
+         */
+        setSearchForm(){
+          var $this = this;
+          $this.$nextTick(()=>{
+            $("#searchForm").selectFilter({
+              callBack: function(val){
+                $this.searchFormId = val;
+              }
+            })
+          });
+        },
+
+        /**
+         * 设置添加表单列
+         */
+        setAddForm(){
+          var $this = this;
+          $this.$nextTick(()=>{
+            $("#addForm").selectFilter({
+              callBack: function(val){
+                $this.addFormId = val;
+              }
+            })
+          })
         },
 
         /**
@@ -265,28 +362,35 @@
             var data = this.tabIds;
             var fields = this.tabFields;
             for(var i=0,len=data.length;i<len;i++){
-              var json = {};
               var tabId = data[i];
               var fieldArray = [];
               for(var j=0,leng=fields.length;j<leng;j++){
                 var field = fields[j];
+                var json = {};
                 if(field.tabId == tabId){
                   this.checked.forEach((obj,index)=>{
                       if(obj == field.tabFieldId){
-                        fieldArray.push(field.tabFieldId)
+                        json['fieldId'] = field.tabFieldId;
+                        json['condition'] = field.condition;
+                        json['objKey'] = field.objKey;
+                        fieldArray.push(json)
                       }
                   })
                 }
               }
+              if(fieldArray.length == 0){continue};
+              var json = {};
               json['tabId'] = tabId;
-              json['fieldIds'] = fieldArray;
+              json['fields'] = fieldArray;
               tabs.push(json)
             }
             param['objId'] = this.objId;
             param['objName'] = this.objName;
             param['objType'] = this.objType;
             param['objStatus'] = this.objStatus;
-            param['params'] = JSON.stringify({"tabIds":tabs});
+            param['searchFormId'] = this.searchFormId;
+            param['addFormId'] = this.addFormId;
+            param['params'] = JSON.stringify(tabs);
             this.$httpService.saveObj(param).then((res)=>{
               if(res.code == '2000'){
                   this.$parent.$parent.init();

@@ -28,4 +28,6 @@ public class EasyMessage {
     public static final String EASY1022 = "EASY1022";
     public static final String EASY1023 = "EASY1023";
     public static final String EASY1024 = "EASY1024";
+    public static final String EASY1025 = "EASY1025";
+    public static final String EASY1026 = "EASY1026";
 }

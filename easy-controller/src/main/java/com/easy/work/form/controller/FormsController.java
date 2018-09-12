@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * Created by apple on 18/4/12.
@@ -57,5 +58,17 @@ public class FormsController {
     public ResponseEntity getFormsDetails(@ModelAttribute FormsModel formsModel) throws MessageException,TransformException{
         FormsModel resultModel = formsService.searchFormsDetails(formsModel);
         return ResponseUtil.success(resultModel);
+    }
+
+    /**
+     * 查出所有表单
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @RequestMapping(value="/getAllForms", method = RequestMethod.GET)
+    public ResponseEntity getAllForms() throws MessageException,TransformException{
+        List<FormsModel> result = formsService.searchForms();
+        return ResponseUtil.success(result);
     }
 }

@@ -75,7 +75,7 @@
               <tr v-for="item in objs">
                 <td>
                   <label class="checkbox00" >
-                    <input type="checkbox" @click="selectOne($event)" :value="item.objId" name="checkbox"><span></span>
+                    <input type="checkbox" v-model="checked" @click="selectOne($event)" :value="item.objId" name="checkbox"><span></span>
                   </label>
                 </td>
                 <td>{{item.objId}}</td>

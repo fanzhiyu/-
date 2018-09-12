@@ -18,6 +18,8 @@ public class TabDto extends PagingDomain<TabDomain> {
 
     private Map<String,Object> fieldMap;
 
+    private Map<String,Object> keyMap;
+
     private String database;
 
     private Map<String,Object> paramList;
@@ -29,6 +31,8 @@ public class TabDto extends PagingDomain<TabDomain> {
     private String startDate;
 
     private String endDate;
+
+    private List<String> tabNameList;
 
     public List<TabFieldDomain> getFieldList() {
         return fieldList;
@@ -44,6 +48,14 @@ public class TabDto extends PagingDomain<TabDomain> {
 
     public void setFieldMap(Map<String, Object> fieldMap) {
         this.fieldMap = fieldMap;
+    }
+
+    public Map<String, Object> getKeyMap() {
+        return keyMap;
+    }
+
+    public void setKeyMap(Map<String, Object> keyMap) {
+        this.keyMap = keyMap;
     }
 
     public String getDatabase() {
@@ -93,6 +105,14 @@ public class TabDto extends PagingDomain<TabDomain> {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
+    }
+
+    public List<String> getTabNameList() {
+        return tabNameList;
+    }
+
+    public void setTabNameList(List<String> tabNameList) {
+        this.tabNameList = tabNameList;
     }
 
     @Override

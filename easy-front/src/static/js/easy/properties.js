@@ -231,8 +231,16 @@ var objId;
   function callPopup($this){
     var $popup = $stringUtil.replace($template.EASY_TAGS.popup,select_title);
     var eml = $($popup).prependTo($("body"));
-    $($template.EASY_TAGS.popup_close).bind('click',(e)=>{eml.remove();}).appendTo(eml.find('.title'));
+    $($template.EASY_TAGS.popup_close).bind('click',(e)=>{
+      eml.find(".popup-window").css({"transform":"scale(0)"})
+      setTimeout(()=>{
+        eml.remove();
+      },400);
+    }).appendTo(eml.find('.title'));
     $($template.EASY_PROPERTIES.option).appendTo($(".popup-content"));
+    setTimeout(()=>{
+      eml.find(".popup-window").css({"transform":"scale(1)"})
+    },50)
     var lists = $this.find("option");
     if(lists.length == 0){
       getOptions("","");

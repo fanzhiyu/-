@@ -84,9 +84,7 @@ public class TabDaoImpl extends BaseRepositoryPagingServiceImpl<TabDomain> imple
         tabDomain.setCount(count);
         this.calculatedPaging(tabDomain);
         List<Object> resultList = this.getSqlSession().selectList(tabDomain.getSqlId()+"findTabDataPaging",tabDomain);
-        TabFieldDomain tabFieldDomain = new TabFieldDomain();
-        tabFieldDomain.setTabId(tabDomain.getTabId());
-        List<TabFieldDomain> fieldList = tabFieldDao.findListCondition(tabFieldDomain);
+        List<TabFieldDomain> fieldList = tabDomain.getFieldList();
         List<String> titles = new ArrayList<String>();
         List<String> titleFields = new ArrayList<String>();
         for(TabFieldDomain fieldDomain:fieldList){
@@ -140,6 +138,24 @@ public class TabDaoImpl extends BaseRepositoryPagingServiceImpl<TabDomain> imple
     }
 
     /**
+     * 修改对应的表数据
+     * @param tabDomain
+     */
+    @Override
+    public void updateData(TabDomain tabDomain) {
+        this.getSqlSession().update(tabDomain.getSqlId()+"updateData",tabDomain);
+    }
+
+    /**
+     * 删除对应表的数据
+     * @param tabDomain
+     */
+    @Override
+    public void deleteData(TabDomain tabDomain) {
+        this.getSqlSession().delete(tabDomain.getSqlId()+"deleteData",tabDomain);
+    }
+
+    /**
      * 创建虚拟javabean
      * @param list
      * @return
@@ -165,22 +181,33 @@ public class TabDaoImpl extends BaseRepositoryPagingServiceImpl<TabDomain> imple
         String json = StringUtils.substring(str, 1, str.length()-1);
         String[] beans = json.split(",");
         for(String field : titleFields){
-            field = field.toLowerCase().trim();
+            String[] fields = field.split("\\.");
+            String tabName = fields[0];
+            String fieldName = fields[1];
+            field = field.replace(".","_").toLowerCase().trim();
             for(String bean : beans){
                 String[] beanArray = bean.split("=");
                 String name = beanArray[0].toLowerCase().trim();
                 if(StringUtils.isEquals(field,name)){
-                    String[] characters =  name.split("_");
+//                    String[] characters =  name.split("_");
                     StringBuffer key = new StringBuffer();
-                    if (characters.length > 1) {
-                        key.append(characters[0]);
-                        for (int i = 1; i < characters.length; i++) {
-                            String character = characters[i];
-                            key.append(StringUtils.substring(character, 0, 1).toUpperCase() + StringUtils.substring(character, 1));
-                        }
-                    }else{
-                        key.append(name);
-                    }
+                    TabDomain tabDomain = new TabDomain();
+                    tabDomain.setTabName(tabName);
+                    TabDomain resDomain = this.findCondition(tabDomain);
+                    TabFieldDomain tabFieldDomain = new TabFieldDomain();
+                    tabFieldDomain.setTabId(resDomain.getTabId());
+                    tabFieldDomain.setTabFieldName(fieldName);
+                    TabFieldDomain resFiledDomain = tabFieldDao.findCondition(tabFieldDomain);
+                    key.append(resFiledDomain.getTabFieldId());
+//                    if (characters.length > 1) {
+//                        key.append(characters[0]);
+//                        for (int i = 1; i < characters.length; i++) {
+//                            String character = characters[i];
+//                            key.append(StringUtils.substring(character, 0, 1).toUpperCase() + StringUtils.substring(character, 1));
+//                        }
+//                    }else{
+//                        key.append(name);
+//                    }
                     map.put(key.toString(), beanArray.length > 1 ? beanArray[1] : "");
                     break;
                 }

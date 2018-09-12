@@ -450,7 +450,7 @@ import './easy-date'
    */
   function layoutPage($index){
     var html = $template.EASY_TAGS.layout;
-    var elm = $(html).bind('click',(e)=>{
+    var elm = $(html).bind("mouseover",(e)=>{
       var $this = $(e.target)
       setLayoutStyle($this);
     }).appendTo($(".canvas form"));
@@ -466,10 +466,16 @@ import './easy-date'
    * 设置layout样式
    */
   function setLayoutStyle($this){
-    $this.parent().find(".layout-delete").remove();
-    var html = $stringUtil.replace($template.EASY_TAGS.layout_delete,layout_delete);
-    $(html).bind('click',(e)=>{}).appendTo($this.parent().find(".layout-column").eq(-1));
+    if($this.parents(".layout").find(".layout-delete").length == 0){
+      var html = $stringUtil.replace($template.EASY_TAGS.layout_delete,layout_delete);
+      $(html).bind('click',(e)=>{
+        var $this = $(e.target);
+        $this.parents(".layout").remove();
+      }).appendTo($this.parents(".layout"));
+    }
   }
+
+
 
   assembly.push(text);
   assembly.push(textarea);

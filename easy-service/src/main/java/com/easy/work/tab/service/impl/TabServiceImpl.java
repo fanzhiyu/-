@@ -10,6 +10,9 @@ import com.easy.core.util.StringUtils;
 import com.easy.core.util.TransUtils;
 import com.easy.core.util.UserUtils;
 import com.easy.work.core.constant.EasyMessage;
+import com.easy.work.obj.domain.ObjDomain;
+import com.easy.work.obj.model.ObjModel;
+import com.easy.work.obj.model.ObjTabModel;
 import com.easy.work.tab.dao.TabDao;
 import com.easy.work.tab.dao.TabFieldDao;
 import com.easy.work.tab.dao.TabFieldTypeDao;
@@ -26,6 +29,7 @@ import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.*;
 
@@ -50,6 +54,8 @@ public class TabServiceImpl implements TabService {
 
     @Autowired
     private UserUtils userUtils;
+
+    private static final String[] FIELD_TYPE_ARRAY = {"text","date","datetime","time","timestamp"};
 
     /**
      * 查找数据库表类型
@@ -193,11 +199,16 @@ public class TabServiceImpl implements TabService {
      */
     @Override
     public TabDataPager searchTabDataPager(TabDataPager tabDataPager) throws MessageException, TransformException {
-        checkTabId(tabDataPager.getTabId());
-        TabDomain tabDomain = searchTabDomain(tabDataPager.getTabId());
+        TabDomain tabDomain = null;
+        if(StringUtils.isNull(tabDataPager.getObjModel())){
+            checkTabId(tabDataPager.getTabId());
+            tabDomain = searchTabDomain(tabDataPager.getTabId());
+        }else{
+            tabDomain = searchTabDomain(tabDataPager.getObjModel());
+        }
         tabDomain.setPageNo(tabDataPager.getPageNo());
         tabDomain.setPageSize(tabDataPager.getPageSize());
-        JSONObject json = StringUtils.isNotNull(tabDataPager.getParams()) ? JSONObject.parseObject(tabDataPager.getParams()) : null;
+        Map<String,Object> json = StringUtils.isNotNull(tabDataPager.getParams()) ? tabDataPager.getParams() : null;
         tabDomain.setParamList(json);
         Map<String,Object> res = tabDao.findTabDataPaging(tabDomain);
         tabDataPager.setTitles((List<String>) res.get("titles"));
@@ -220,6 +231,25 @@ public class TabServiceImpl implements TabService {
         JSONObject json = StringUtils.isNotNull(tabDataModel.getParams()) ? JSONObject.parseObject(tabDataModel.getParams()) : null;
         tabDomain.setParamList(json);
         return tabDao.findTabData(tabDomain);
+    }
+
+    /**
+     * 删除对应表的数据
+     * @param tabModel
+     */
+    @Override
+    public void deleteTabData(TabModel tabModel) throws MessageException {
+        checkTabId(tabModel.getTabId());
+        if(StringUtils.isNotNull(tabModel.getKeyMap()) && tabModel.getKeyMap().size()  == 0){
+            throw new MessageException(Manager.getMessage(EasyMessage.EASY1025));
+        }
+        TabDomain tabDomain = new TabDomain();
+        tabDomain.setTabId(tabModel.getTabId());
+        TabDomain resDomain = tabDao.findCondition(tabDomain);
+        if(StringUtils.isNotNull(resDomain)){
+            resDomain.setKeyMap(tabModel.getKeyMap());
+            tabDao.deleteData(resDomain);
+        }
     }
 
     /**
@@ -248,8 +278,11 @@ public class TabServiceImpl implements TabService {
         checkTabId(tabDomain.getTabId());
         UserBean userBean = userUtils.getUser();
         List<TabFieldDomain> insertList = new ArrayList<TabFieldDomain>();
-        List<TabFieldDomain> updateList = new ArrayList<TabFieldDomain>();
         for(TabFieldDomain domain : tabDomain.getFieldList()){
+            if(Arrays.binarySearch(FIELD_TYPE_ARRAY,domain.getTabFieldType()) < 0
+                    && StringUtils.isNull(domain.getTabFieldLength())){
+                throw new MessageException(Manager.getMessage(EasyMessage.EASY1026,domain.getTabFieldType()));
+            }
             domain.setTabId(tabDomain.getTabId());
             domain.setUpdater(userBean.getUserCode());
             domain.setUpdateTime(DateUtils.getSystemDate());
@@ -274,7 +307,9 @@ public class TabServiceImpl implements TabService {
     private void updateTab(TabDomain tabDomain) throws MessageException{
         checkTabId(tabDomain.getTabId());
         UserBean userBean = userUtils.getUser();
-        TabDomain updateDomain = tabDao.findCondition(tabDomain);
+        TabDomain where = new TabDomain();
+        where.setTabId(tabDomain.getTabId());
+        TabDomain updateDomain = tabDao.findCondition(where);
         if(StringUtils.isNull(updateDomain)){
             // 数据库表编号没有查到匹配的数据库请确认编号是否正确
             throw new MessageException(Manager.getMessage(EasyMessage.EASY1012));
@@ -294,25 +329,58 @@ public class TabServiceImpl implements TabService {
 
     /**
      * 查找出表所对应的字段
+     * @param objModels
+     * @return
+     * @throws MessageException
+     */
+    private TabDomain searchTabDomain(ObjModel objModels) throws MessageException{
+        TabDomain resultDomain = new TabDomain();
+        List<TabFieldDomain> fieldList = new ArrayList<TabFieldDomain>();
+        List<String> tabNames = new ArrayList<String>();
+        for(ObjTabModel objTabModel : objModels.getTabIds()){
+            TabFieldDomain tabFieldDomain = new TabFieldDomain();
+            if(StringUtils.isNotNull(objTabModel.getFieldIds()) && objTabModel.getFieldIds().size() > 0){
+                tabFieldDomain.setTabFieldIdList(objTabModel.getFieldIds());
+            }else{
+                tabFieldDomain.setTabId(objTabModel.getTabId());
+            }
+            TabDomain tabDomain = new TabDomain();
+            tabDomain.setTabId(objTabModel.getTabId());
+            TabDomain createDomain = tabDao.findCondition(tabDomain);
+            if(StringUtils.isNull(createDomain)){
+                throw new MessageException(Manager.getMessage(EasyMessage.EASY1010));
+            }
+
+            List<TabFieldDomain> resultFields = tabFieldDao.findListCondition(tabFieldDomain);
+            for(TabFieldDomain domain : resultFields){
+                domain.setAlias(createDomain.getTabName()+"_"+domain.getTabFieldName());
+                domain.setTabFieldName(createDomain.getTabName()+"."+domain.getTabFieldName());
+                fieldList.add(domain);
+            }
+            if(StringUtils.isNull(fieldList)){
+                throw new MessageException(Manager.getMessage(EasyMessage.EASY1013));
+            }
+            tabNames.add(createDomain.getTabName());
+        }
+        resultDomain.setFieldList(fieldList);
+        resultDomain.setTabNameList(tabNames);
+        return resultDomain;
+    }
+
+    /**
+     * 查找出表所对应的字段
      * @param tabId
      * @return
      * @throws MessageException
      */
     private TabDomain searchTabDomain(String tabId) throws MessageException{
-        TabDomain tabDomain = new TabDomain();
-        tabDomain.setTabId(tabId);
-        TabDomain createDomain = tabDao.findCondition(tabDomain);
-        if(StringUtils.isNull(createDomain)){
-            throw new MessageException(Manager.getMessage(EasyMessage.EASY1010));
-        }
-        TabFieldDomain tabFieldDomain = new TabFieldDomain();
-        tabFieldDomain.setTabId(tabDomain.getTabId());
-        List<TabFieldDomain> fieldList = tabFieldDao.findListCondition(tabFieldDomain);
-        if(StringUtils.isNull(fieldList)){
-            throw new MessageException(Manager.getMessage(EasyMessage.EASY1013));
-        }
-        createDomain.setFieldList(fieldList);
-        return createDomain;
+        List<ObjTabModel> tabIds = new ArrayList<ObjTabModel>();
+        ObjTabModel model = new ObjTabModel();
+        model.setTabId(tabId);
+        tabIds.add(model);
+        ObjModel objModel = new ObjModel();
+        objModel.setTabIds(tabIds);
+        return searchTabDomain(objModel);
     }
 
     /**

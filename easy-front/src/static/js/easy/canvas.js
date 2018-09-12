@@ -63,19 +63,28 @@ import {Indicator, MessageBox,Toast} from "mint-ui";
     var canvas = $(".canvas").find(".form").html();
     var $popup = $stringUtil.replace($template.EASY_TAGS.popup,"表单预览");
     var eml = $($popup).prependTo($("body"));
-    eml.find(".popup-window").css({"width":"80%","min-height":"400px"});
-    $($template.EASY_TAGS.popup_close).bind('click',(e)=>{eml.remove();}).appendTo(eml.find('.title'));
+    eml.find(".popup-window").css({"width":"50%","min-height":"400px"});
+    setTimeout(()=>{
+      eml.find(".popup-window").css({"transform":"scale(1)"})
+    },50)
+    $($template.EASY_TAGS.popup_close).bind('click',(e)=>{
+      eml.find(".popup-window").css({"transform":"scale(0)"})
+      setTimeout(()=>{
+        eml.remove();
+      },400);
+    }).appendTo(eml.find('.title'));
     var body = $(canvas).appendTo($(".popup-content"));
     body.find(".tags").removeClass("tags-box");
+    body.find(".layout .layout-delete").remove();
+    body.find(".layout").removeClass("layout");
+    body.find(".layout-column").css("border","0px")
     body.find("i").remove();
     var selects = body.find(".filter-box");
     for(var i=0,len=selects.length;i<len;i++){
       var select = $(selects[i]);
       select.selectFilter({
         callBack : function (val){
-          console.log(val);
           select.find("input[type=hidden]").val(val);
-          // if(typeof param.change == 'function'){param.change(val)}
         }
       });
     }
@@ -87,6 +96,8 @@ import {Indicator, MessageBox,Toast} from "mint-ui";
   function save(){
     var form = $(".canvas").find(".form");
     form.find(".tags").removeClass("tags-box");
+    form.find(".layout").removeClass("layout");
+    form.find(".layout-column").css("border","0px")
     form.find("i").remove();
     var html = form.html();
     var objId = form.find("form").attr("bind-id");
@@ -103,7 +114,13 @@ import {Indicator, MessageBox,Toast} from "mint-ui";
     param['formHtml'] = html;
     param['formTitle'] = form.find(".form-title").text();
     httpService.saveForms(param).then((res)=>{
-      console.log(res);
+      if(res.code == '2000'){
+        Toast({
+          duration: 1500,
+          message: '表单保存成功'
+        });
+        Indicator.close();
+      }
     })
   }
 

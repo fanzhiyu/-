@@ -74,7 +74,23 @@ public class FormsServiceImpl implements FormsService {
         FormsDomain formsDomain = new FormsDomain();
         formsDomain.setFormId(formsModel.getFormId());
         FormsDomain resultDomain = formsDao.findCondition(formsDomain);
-        return TransUtils.formatObject(FormsModel.class,resultDomain);
+        if(StringUtils.isNotNull(resultDomain)){
+            return TransUtils.formatObject(FormsModel.class,resultDomain);
+        }
+        return null;
+    }
+
+    /**
+     * 查询所有表单
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @Override
+    public List<FormsModel> searchForms() throws MessageException, TransformException {
+        FormsDomain formsDomain = new FormsDomain();
+        List<FormsDomain> resultList = formsDao.findList(formsDomain);
+        return TransUtils.formatList(FormsModel.class,resultList);
     }
 
     /**

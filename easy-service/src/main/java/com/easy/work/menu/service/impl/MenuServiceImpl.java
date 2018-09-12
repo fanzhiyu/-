@@ -90,7 +90,7 @@ public class MenuServiceImpl implements MenuService {
         MenuDomain menuDomain = TransUtils.formatObject(MenuDomain.class,menuModel);
         menuDomain.setUpdater(userBean.getUserCode());
         menuDomain.setUpdateTime(DateUtils.getSystemDate());
-        menuDomain.setMenuUrl(StringUtils.isNotNull(menuModel.getObjId()) ? "/list" : menuModel.getMenuUrl());
+        menuDomain.setMenuUrl(StringUtils.isNotNull(menuModel.getObjId()) ? "/list?objId="+menuModel.getObjId() : menuModel.getMenuUrl());
         if(StringUtils.isNull(menuDomain.getMenuId())){
             menuDomain.setCreater(userBean.getUserCode());
             menuDomain.setCreateTime(DateUtils.getSystemDate());
@@ -215,6 +215,11 @@ public class MenuServiceImpl implements MenuService {
         return getMenus(list, status, roleIds,userCode);
     }
 
+    /**
+     * 验证菜单id是否填写
+     * @param menuModel
+     * @throws MessageException
+     */
     private void checkMenuId(MenuModel menuModel) throws MessageException{
         if(StringUtils.isNull(menuModel.getMenuId())){
             throw new MessageException(Manager.getMessage(EasyMessage.EASY1001,Manager.getMessage(EasyMessage.EASY1018)));

@@ -23,7 +23,7 @@
         <gson.version>1.7.1</gson.version>
         <json-lib.version>2.4</json-lib.version>
         <fastjson.version>1.2.17</fastjson.version>
-        <framework-atme.version>0.0.1-SNAPSHOT</framework-atme.version>
+        <framework.version>0.0.1-SNAPSHOT</framework.version>
         <json-lib.version>2.4</json-lib.version>
         <easy.version>0.0.1-SNAPSHOT</easy.version>
         <ddsdk.version>1.0.0-SNAPSHOT</ddsdk.version>
@@ -69,17 +69,17 @@
             <dependency>
                 <groupId>framework</groupId>
                 <artifactId>framework-mybatis</artifactId>
-                <version>${framework-atme.version}</version>
+                <version>${framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>framework</groupId>
                 <artifactId>framework-dubbo</artifactId>
-                <version>${framework-atme.version}</version>
+                <version>${framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>framework</groupId>
                 <artifactId>framework-spring</artifactId>
-                <version>${framework-atme.version}</version>
+                <version>${framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -115,7 +115,7 @@
             <dependency>
                 <groupId>com.framework.atme</groupId>
                 <artifactId>framework-atme-activiti</artifactId>
-                <version>${framework-atme.version}</version>
+                <version>${framework.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>

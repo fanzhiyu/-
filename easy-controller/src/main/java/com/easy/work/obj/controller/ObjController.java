@@ -1,13 +1,20 @@
 package com.easy.work.obj.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.easy.core.exception.MessageException;
 import com.easy.core.exception.TransformException;
 import com.easy.core.util.ResponseUtil;
 import com.easy.core.util.StringUtils;
+import com.easy.work.forms.model.FormsModel;
+import com.easy.work.obj.domain.ObjDomain;
+import com.easy.work.obj.model.ObjFieldModel;
 import com.easy.work.obj.model.ObjModel;
 import com.easy.work.obj.model.ObjPager;
 import com.easy.work.obj.model.ObjTabFieldModel;
 import com.easy.work.obj.service.ObjService;
+import com.easy.work.tab.model.TabDataPager;
+import com.easy.work.tab.model.TabFieldInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,9 +54,7 @@ public class ObjController {
      */
     @RequestMapping(value = "saveObj", method = RequestMethod.POST)
     public ResponseEntity saveObj(@ModelAttribute ObjModel objModel,String params) throws MessageException,TransformException{
-        ObjModel paramModel = StringUtils.stringToBena(params, ObjModel.class);
-        objModel.setTabIds(paramModel.getTabIds());
-        objService.saveObj(objModel);
+        objService.saveObj(objModel,params);
         return ResponseUtil.success();
     }
 
@@ -93,6 +98,18 @@ public class ObjController {
     }
 
     /**
+     * @param objModel
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @RequestMapping(value = "getObjDataPager", method = RequestMethod.GET)
+    public ResponseEntity getObjDataPager(@ModelAttribute ObjModel objModel) throws MessageException,TransformException{
+        TabDataPager result = objService.searchTabDataByObjId(objModel);
+        return ResponseUtil.success(result);
+    }
+
+    /**
      * 删除对象
      * @param objModel
      * @return
@@ -101,6 +118,56 @@ public class ObjController {
     @RequestMapping(value = "removeObj", method = RequestMethod.POST)
     public ResponseEntity removeObj(@ModelAttribute ObjModel objModel) throws MessageException{
         objService.deleteObj(objModel);
+        return ResponseUtil.success();
+    }
+
+    /**
+     * 查找表单
+     * @param objModel
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @RequestMapping(value = "getFormsByObjId", method = RequestMethod.GET)
+    public ResponseEntity getFormsByObjId(@ModelAttribute ObjModel objModel) throws MessageException,TransformException{
+        FormsModel result = objService.searchFormByObjId(objModel);
+        return ResponseUtil.success(result);
+    }
+
+    /**
+     * 根据objid查找字段
+     * @param objModel
+     * @return
+     * @throws MessageException
+     */
+    @RequestMapping(value = "getFieldByObjId", method = RequestMethod.GET)
+    public ResponseEntity getFieldByObjId(@ModelAttribute ObjModel objModel) throws MessageException,TransformException{
+        FormsModel result = objService.searchFieldByObjId(objModel);
+        return ResponseUtil.success(result);
+    }
+
+    /**
+     * 查找数据详细
+     * @param params
+     * @return
+     * @throws MessageException
+     */
+    @RequestMapping(value = "getTabDataDetails", method = RequestMethod.GET)
+    public ResponseEntity getTabDataDetails(String params) throws MessageException,TransformException{
+        JSONObject result = objService.searchTabDataDetails(params);
+        return ResponseUtil.success(result);
+    }
+
+    /**
+     * 删除表数据
+     * @param params
+     * @return
+     * @throws MessageException
+     * @throws TransformException
+     */
+    @RequestMapping(value = "removeTabData", method = RequestMethod.POST)
+    public ResponseEntity removeTabData(String params) throws MessageException,TransformException{
+        objService.deleteTabData(params);
         return ResponseUtil.success();
     }
 }

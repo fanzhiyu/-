@@ -45,4 +45,16 @@ public interface TabDao extends BaseRepositoryPagingService<TabDomain> {
      * @param tabDomain
      */
     public void insertData(TabDomain tabDomain);
+
+    /**
+     * 修改对应的表数据
+     * @param tabDomain
+     */
+    public void updateData(TabDomain tabDomain);
+
+    /**
+     * 删除对应表的数据
+     * @param tabDomain
+     */
+    public void deleteData(TabDomain tabDomain);
 }

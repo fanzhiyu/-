@@ -41,6 +41,13 @@ export default {
   },
 
   /**
+   * 查询所有表单
+   */
+  getAllForms: function(){
+    return GET(API.GETALLFORMS)
+  },
+
+  /**
    * 用户登录
    * @param param
    */
@@ -172,6 +179,45 @@ export default {
     return GET(API.GETOBJTABFIELDLIST,param)
   },
 
+  /**
+   * 获取数据
+   * @param param
+   */
+  getObjDataPager: function (param) {
+    return GET(API.GETOBJDATAPAGER,param)
+  },
+
+  /**
+   * 获取forms表单
+   * @param param
+   */
+  getFormsByObjId: function(param){
+    return GET(API.GETFORMSBYOBJID,param)
+  },
+
+  /**
+   * 根据objId查找字段
+   * @param param
+   */
+  getFieldByObiId: function (param) {
+    return GET(API.GETFIELDBYOBJID,param)
+  },
+
+  /**
+   * 查找数据详细
+   * @param param
+   */
+  getTabDataDetails: function (param) {
+    return GET(API.GETTABDATADETAILS,param)
+  },
+
+  /**
+   * 删除表数据
+   * @param params
+   */
+  removeTabData: function(params){
+    return POST(API.REMOVETABDATA,params)
+  },
   /**
    * 保存事件
    * @param param
